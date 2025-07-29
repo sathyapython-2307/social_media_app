@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <h1>Hi, {{ current_user.username }}!</h1>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <form action="{{ url_for('post') }}" method="post">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    {{ form.body(class="form-control", placeholder="What's happening? (280 chars max)") }}
+                    {% for error in form.body.errors %}
+                    <div class="alert alert-danger mt-2">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                {{ form.submit(class="btn btn-primary") }}
+            </form>
+        </div>
+    </div>
+
+    {% for post in posts %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <h5 class="card-title">
+                    <a href="{{ url_for('user', username=post.author.username) }}">
+                        {{ post.author.username }}
+                    </a>
+                </h5>
+                <small class="text-muted">{{ post.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+            </div>
+            <p class="card-text">{{ post.body }}</p>
+            
+            {% if post.author != current_user %}
+            <div>
+                {% if current_user.is_following(post.author) %}
+                <a href="{{ url_for('unfollow', username=post.author.username) }}" class="btn btn-sm btn-outline-danger">Unfollow</a>
+                {% else %}
+                <a href="{{ url_for('follow', username=post.author.username) }}" class="btn btn-sm btn-outline-success">Follow</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+{% endblock %}

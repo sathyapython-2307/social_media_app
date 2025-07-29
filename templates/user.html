@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.username }}{% endblock %}
+
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>User: {{ user.username }}</h1>
+        {% if user != current_user %}
+            {% if current_user.is_following(user) %}
+            <a href="{{ url_for('unfollow', username=user.username) }}" class="btn btn-danger">Unfollow</a>
+            {% else %}
+            <a href="{{ url_for('follow', username=user.username) }}" class="btn btn-success">Follow</a>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 text-center">
+                    <h5>Followers</h5>
+                    <p class="display-6">{{ user.followers.count() }}</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h5>Following</h5>
+                    <p class="display-6">{{ user.followed.count() }}</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h5>Posts</h5>
+                    <p class="display-6">{{ user.posts.count() }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% for post in posts %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <h5 class="card-title">
+                    <a href="{{ url_for('user', username=post.author.username) }}">
+                        {{ post.author.username }}
+                    </a>
+                </h5>
+                <small class="text-muted">{{ post.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+            </div>
+            <p class="card-text">{{ post.body }}</p>
+        </div>
+    </div>
+    {% endfor %}
+{% endblock %}
