@@ -4,3 +4,4 @@ flask-login
 flask-wtf
 psycopg2-binary
 python-dotenv
+gunicorn
